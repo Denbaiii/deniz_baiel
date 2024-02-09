@@ -1,3 +1,4 @@
+import imp
 from django.shortcuts import render, redirect
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -8,6 +9,8 @@ from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import permissions
 from justlang.tasks import send_confirmation_email_task, send_confirmation_password_task
+from drf_yasg.utils import swagger_auto_schema
+from .send_email import send_confirmation_email
 
 
 User = get_user_model()
@@ -49,23 +52,22 @@ class LogoutView(APIView):
             return Response({'error':'Invalid Token'}, status=400)
                 
 
-    class RegistrationView(APIView):
-        def post(self, request):
-            serializer = RegistrationSerializer(data=request.data)
-            if serializer.is_valid():
-                user = serializer.save()
-                if user:
-                    try:
-                        send_confirmation_email_task.delay(user.email, user.activation_code)
-                    except:
-                        return Response({"message": "Зарегистрировался, но на почту код не отправился.",
-                                        'data': serializer.data}, status=200)
-                return Response({'message': 'User registered successfully'})
-            else:
-                return Response({'errors': serializer.errors})
+class RegistrationView(APIView):
+    @swagger_auto_schema(request_body=RegistrationSerializer())
+    def post(self, request):
+        serializer = RegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                # try:
+                send_confirmation_email(user.email, user.activation_code)
+                # except:
+                #  return Response({"message": "Зарегистрировался, но на почту код не отправился.",
+                                    # 'data': serializer.data}, status=200)
+            return Response({'message': 'User registered successfully'})
+        else:
+            return Response({'errors': serializer.errors})
                 
-def activation_view(request):
-    return render(request, 'activation.html')
 
 class RegistrationPhoneView(APIView):
     def post(self, request):

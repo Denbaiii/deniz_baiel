@@ -67,6 +67,7 @@ class CustomUser(AbstractUser):
         import uuid
         code = str(uuid.uuid4())
         self.activation_code = code
+        
 
     def create_phone_number_code(self):
         code = get_random_string(6, allowed_chars='123456789')
