@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Libraries
     'rest_framework',
     'rest_framework.authtoken',
     'drf_yasg',
@@ -49,8 +50,10 @@ INSTALLED_APPS = [
     'django_celery_results',
     # 'drf_api_logger',
     'cachalot',
-
+    # Apps
     'account',
+    'category',
+    'teachers',
 ]
 
 MIDDLEWARE = [

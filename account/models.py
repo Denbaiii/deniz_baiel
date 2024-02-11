@@ -1,9 +1,11 @@
 from django.db import models
+
+# Create your models here.
+from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.crypto import get_random_string
-from django.contrib.auth.models import Permission
-from django.contrib.auth.models import Group
+
 
 
 
@@ -52,8 +54,6 @@ class CustomUser(AbstractUser):
     avatar = models.ImageField(upload_to='avatars', blank=True)
     is_active = models.BooleanField(default=False, help_text='This field is to activate the user')
     phone_number = models.CharField(max_length=25, blank=True, null=True, unique=True)
-    user_permissions = models.ManyToManyField(Permission, related_name='custom_user_permissions')
-    groups = models.ManyToManyField(Group, related_name='customuser_set')
 
     objects = UserManager()
 
